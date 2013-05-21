@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+	<meta charset="UTF-8">
 	<title>Document</title>
     <style type="text/css">
         *{margin: 0;padding: 0}
@@ -142,22 +142,20 @@
                     wHeight = $(window).height();
 
                 if((elTop - threshold <= 0 || layerHeight > wHeight) && elTop > wScrollTop){
-                    console.log(1);
                     return threshold;
                 }
                 if(elTop < wScrollTop || elTop - wScrollTop < elHeight){
-                    console.log(2);
                     return wScrollTop;
                 }
                 if(elTop + elHeight > wScrollTop + wHeight || elTop + elHeight > wScrollTop + wHeight){
-                    console.log(3);
                     return wScrollTop + wHeight - layerHeight;
                 }
-                if(elTop - wScrollTop > elHeight && elTop + elHeight <= wScrollTop + wHeight){
-                    console.log(4);
+                if(elTop - wScrollTop > elHeight && wScrollTop + wHeight - elTop - elHeight <= elHeight){
                     return elHeight + elTop - layerHeight;
                 }
-                console.log(5);
+                if(wScrollTop + wHeight - elTop - elHeight > elHeight &&  layerHeight < wHeight){
+                    return wScrollTop + (wHeight - layerHeight)/2;
+                }
                 return (wHeight - layerHeight)/2;
             }
         }
