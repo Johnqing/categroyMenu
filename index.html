@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+	<title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0}
+        ul{
+            margin: 10px;
+        }
+        li{
+            list-style: none;
+            position: relative;
+            border: 1px solid #000;
+            width: 150px;
+            height: 100px;
+        }
+        .selected{border:1px solid #00f}
+        li .layerBox{display:none}
+        .layerBox{
+            position: absolute;
+            top:-1px;
+            left:160px;
+            width: 0px;
+            min-height: 300px;
+            background: #f00;
+        }
+    </style>
+</head>
+<body>
+<h1>不能超过这里哦~</h1>
+<ul id="cate">
+    <li>
+        <div class="layerBox"><p>00000</p>
+
+            <p>1</p>
+
+            <p>1</p>
+
+            <p>1</p>
+
+            <p>1</p>
+
+            <p>1</p>
+
+            <p>1</p>
+
+            <p>1</p>
+
+            <p>1</p>
+
+            <p>1</p>   </div>
+    </li>
+    <li>
+        <div class="layerBox">111</div>
+    </li>
+    <li>
+        <div class="layerBox">222</div>
+    </li>
+    <li>
+        <div class="layerBox">333</div>
+    </li>
+    <li>
+        <div class="layerBox">44</div>
+    </li>
+    <li>
+        <div class="layerBox">55</div>
+    </li>
+    <li>
+        <div class="layerBox">66666</div>
+    </li>
+    <li>
+        <div class="layerBox">777777</div>
+    </li>
+    <li>
+        <div class="layerBox">888888</div>
+    </li>
+    <li>
+        <div class="layerBox">99999999</div>
+    </li>
+</ul>
+<script type="text/javascript" src="jquery-1.2.1.js"></script>
+<script type="text/javascript">
+    (function($){
+        var defaultConfig = {
+            wraperClass: 'layerBox',
+            wraperWidth: 400
+        }
+        var Categroy = function(target, opts){
+            this.target = target;
+            this.wraperClass = opts.wraperClass;
+            this.wraperWidth = opts.wraperWidth;
+
+            this.timer = null;
+
+            this.init();
+        }
+        Categroy.prototype = {
+            init: function(){
+                var self = this;
+                self.wraper = $('<div class="'+self.wraperClass+'"></div>');
+                $('body').append(self.wraper);
+                //bind event
+                self.addEvent();
+            },
+            addEvent: function(){
+                var self = this;
+                self.target.hover(function(){
+                    clearTimeout(self.timer);
+                    self.target.removeClass('selected');
+                    var that = $(this),
+                        wraperCon = that.find('div').html();
+                    that.addClass('selected');
+                    self.wraper.html(wraperCon).width(self.wraperWidth).css({
+                        top: self.count(that)
+                    });
+                },function(){
+                    var that = $(this);
+                    self.timer = setTimeout(function(){
+                        that.removeClass('selected');
+                        self.wraper.empty().width(0);
+                    },100);
+                });
+
+                self.wraper.hover(function(){
+                    clearTimeout(self.timer);
+                },function(){
+                    self.timer = setTimeout(function(){
+                        $('.selected').removeClass('selected');
+                        self.wraper.empty().width(0);
+                    },100);
+                });
+            },
+            count: function(el){
+                var self = this,
+                    threshold = self.target.eq(0).offset().top,
+                    wraper = self.wraper,
+                    layerHeight = wraper.height(),
+                    elHeight = el.height(),
+                    elTop = el.offset().top,
+                    wScrollTop = document.body.scrollTop,
+                    wHeight = $(window).height();
+
+                if((elTop - threshold <= 0 || layerHeight > wHeight) && elTop > wScrollTop){
+                    console.log(1);
+                    return threshold;
+                }
+                if(elTop < wScrollTop || elTop - wScrollTop < elHeight){
+                    console.log(2);
+                    return wScrollTop;
+                }
+                if(elTop + elHeight > wScrollTop + wHeight || elTop + elHeight > wScrollTop + wHeight){
+                    console.log(3);
+                    return wScrollTop + wHeight - layerHeight;
+                }
+                if(elTop - wScrollTop > elHeight && elTop + elHeight <= wScrollTop + wHeight){
+                    console.log(4);
+                    return elHeight + elTop - layerHeight;
+                }
+                console.log(5);
+                return (wHeight - layerHeight)/2;
+            }
+        }
+        $.fn.categroy = function(opts){
+            opts = $.extend({}, defaultConfig, opts);
+            new Categroy($(this), opts);
+        }
+    })(jQuery);
+
+    $('li').categroy();
+</script>
+</body>
+</html>
